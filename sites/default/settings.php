@@ -891,11 +891,13 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 #   include $app_root . '/' . $site_path . '/settings.local.php';
 # }
 $databases['default']['default'] = array (
-  'database' => 'drupaldb',
+  'database' => 'drupaldb1',
   'username' => 'hamza',
   'password' => 'newpassword',
   'prefix' => '',
   'host' => 'drupal-mysql-service',
+  #'host' => 'localhost',
+
   'port' => '3306',
   'isolation_level' => 'READ COMMITTED',
   'driver' => 'mysql',
