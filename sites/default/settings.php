@@ -895,11 +895,11 @@ $databases['default']['default'] = array (
   'username' => 'hamza',
   'password' => 'newpassword',
   'prefix' => '',
-  'host' => 'localhost',
+  'host' => 'drupal-mysql-service',
   'port' => '3306',
   'isolation_level' => 'READ COMMITTED',
   'driver' => 'mysql',
-  'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
-  'autoload' => 'core/modules/mysql\\src\\Driver\\Database\\mysql\\',
+  #'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
+  #'autoload' => 'core/modules/mysql\\src\\Driver\\Database\\mysql\\',
 );
 $settings['config_sync_directory'] = 'sites/default/files/config_BkBFbQH7RxPAWzioEBlQyxzcKqwdw1eggVNV8oCo_jKEvXQratsn66BOh1ZcEt-VmVuui963Pg/sync';
