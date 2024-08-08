@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: drupal-mysql-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem  
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /drupal-mysql-data
+  persistentVolumeReclaimPolicy: Retain  # Updated reclaim policy
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: drupal-mysql-pvc
+  namespace: drupal-cicd
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem  
+  resources:
+    requests:
+      storage: 3Gi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: drupal-mysql
+  name: drupal-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drupal-mysql
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: drupal-mysql
+    spec:
+      containers:
+      - image: hamza701/drupal-mysql-ci-cd:mysql-v2
+        imagePullPolicy: Always
+        name: mysql
+        env:
+        - name: MYSQL_DATABASE
+          value: "drupaldb"
+        - name: MYSQL_USER
+          value: "hamza"
+        - name: MYSQL_PASSWORD
+          value: "newpassword"
+        volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: drupal-mysql-storage
+      volumes:
+        - name: drupal-mysql-storage
+          persistentVolumeClaim:
+            claimName: drupal-mysql-pvc
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: drupal
+  name: drupal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drupal
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: drupal
+    spec:
+      containers:
+      - image: hamza701/drupal-mysql-ci-cd:drupal-v2
+        imagePullPolicy: Always
+        name: drupal
+        ports:
+        - containerPort: 80
+        resources: {}
+
+---
+
+# Separate commands for exposing services
+#kubectl expose deployment drupal --name=drupal-service --type=NodePort --port=80 --namespace=drupal-cicd
+#kubectl expose deployment drupal-mysql --name=drupal-mysql-service --type=ClusterIP --port=3306 --namespace=drupal-cicd
+# to access to drupal installation http://192.168.56.102:32376/core/install.php
